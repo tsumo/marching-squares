@@ -49,28 +49,33 @@ export class Render {
     for (let x = 0; x < this.width; x += this.gridStep) {
       for (let y = 0; y < this.height; y += this.gridStep) {
         this.ctx.strokeRect(x, y, this.gridStep, this.gridStep);
-        const lt = this.calcInfluence(x, y);
         const lb = this.calcInfluence(x, y + this.gridStep);
-        const rt = this.calcInfluence(x + this.gridStep, y);
         const rb = this.calcInfluence(x + this.gridStep, y + this.gridStep);
-        if (lt) {
-          this.ctx.beginPath();
-          this.ctx.arc(x, y, 2, 0, Math.PI * 2);
-          this.ctx.fill();
-        }
+        const rt = this.calcInfluence(x + this.gridStep, y);
+        const lt = this.calcInfluence(x, y);
+        let configuration = 0;
         if (lb) {
+          configuration | 0b0001;
           this.ctx.beginPath();
           this.ctx.arc(x, y + this.gridStep, 2, 0, Math.PI * 2);
           this.ctx.fill();
         }
+        if (rb) {
+          configuration | 0b0010;
+          this.ctx.beginPath();
+          this.ctx.arc(x + this.gridStep, y + this.gridStep, 2, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
         if (rt) {
+          configuration | 0b0100;
           this.ctx.beginPath();
           this.ctx.arc(x + this.gridStep, y, 2, 0, Math.PI * 2);
           this.ctx.fill();
         }
-        if (rb) {
+        if (lt) {
+          configuration | 0b1000;
           this.ctx.beginPath();
-          this.ctx.arc(x + this.gridStep, y + this.gridStep, 2, 0, Math.PI * 2);
+          this.ctx.arc(x, y, 2, 0, Math.PI * 2);
           this.ctx.fill();
         }
       }
