@@ -48,17 +48,21 @@ export class Render {
     this.ctx.fillStyle = "indianred";
     for (let x = 0; x < this.width; x += this.gridStep) {
       for (let y = 0; y < this.height; y += this.gridStep) {
-        const influence = this.balls.reduce((prev, curr) => {
-          const xx = (x + this.gridHalfStep - curr.x) ** 2;
-          const yy = (y + this.gridHalfStep - curr.y) ** 2;
-          return curr.radius ** 2 / (xx + yy) + prev;
-        }, 0);
-        if (influence >= 1) {
+        if (this.calcInfluence(x + this.gridHalfStep, y + this.gridHalfStep)) {
           this.ctx.fillRect(x, y, 20, 20);
         }
         this.ctx.strokeRect(x, y, this.gridStep, this.gridStep);
       }
     }
+  }
+
+  private calcInfluence(x: number, y: number) {
+    const influence = this.balls.reduce((prev, curr) => {
+      const xx = (x + this.gridHalfStep - curr.x) ** 2;
+      const yy = (y + this.gridHalfStep - curr.y) ** 2;
+      return curr.radius ** 2 / (xx + yy) + prev;
+    }, 0);
+    return influence >= 1;
   }
 
   private updateBalls() {
