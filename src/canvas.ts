@@ -8,8 +8,8 @@ export class Render {
   private readonly width = 640;
   private readonly height = 480;
 
-  private readonly gridStep = 10;
-  private readonly gridHalfStep = 5;
+  private readonly gridStep = 14;
+  private readonly gridHalfStep = 7;
 
   balls: Ball[] = [];
 
@@ -48,10 +48,33 @@ export class Render {
     this.ctx.fillStyle = "indianred";
     for (let x = 0; x < this.width; x += this.gridStep) {
       for (let y = 0; y < this.height; y += this.gridStep) {
-        if (this.calcInfluence(x + this.gridHalfStep, y + this.gridHalfStep)) {
-          this.ctx.fillRect(x, y, 20, 20);
-        }
         this.ctx.strokeRect(x, y, this.gridStep, this.gridStep);
+        const xx = x - this.gridHalfStep;
+        const yy = y - this.gridHalfStep;
+        const lt = this.calcInfluence(xx, yy);
+        const lb = this.calcInfluence(xx, yy + this.gridStep);
+        const rt = this.calcInfluence(xx + this.gridStep, yy);
+        const rb = this.calcInfluence(xx + this.gridStep, yy + this.gridStep);
+        if (lt) {
+          this.ctx.beginPath();
+          this.ctx.arc(x, y, 2, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+        if (lb) {
+          this.ctx.beginPath();
+          this.ctx.arc(x, y + this.gridStep, 2, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+        if (rt) {
+          this.ctx.beginPath();
+          this.ctx.arc(x + this.gridStep, y, 2, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
+        if (rb) {
+          this.ctx.beginPath();
+          this.ctx.arc(x + this.gridStep, y + this.gridStep, 2, 0, Math.PI * 2);
+          this.ctx.fill();
+        }
       }
     }
   }
