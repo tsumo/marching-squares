@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #1b272d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+canvas {
+  outline: 1px solid grey;
+}
