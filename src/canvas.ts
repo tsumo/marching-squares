@@ -49,12 +49,10 @@ export class Render {
     for (let x = 0; x < this.width; x += this.gridStep) {
       for (let y = 0; y < this.height; y += this.gridStep) {
         this.ctx.strokeRect(x, y, this.gridStep, this.gridStep);
-        const xx = x - this.gridHalfStep;
-        const yy = y - this.gridHalfStep;
-        const lt = this.calcInfluence(xx, yy);
-        const lb = this.calcInfluence(xx, yy + this.gridStep);
-        const rt = this.calcInfluence(xx + this.gridStep, yy);
-        const rb = this.calcInfluence(xx + this.gridStep, yy + this.gridStep);
+        const lt = this.calcInfluence(x, y);
+        const lb = this.calcInfluence(x, y + this.gridStep);
+        const rt = this.calcInfluence(x + this.gridStep, y);
+        const rb = this.calcInfluence(x + this.gridStep, y + this.gridStep);
         if (lt) {
           this.ctx.beginPath();
           this.ctx.arc(x, y, 2, 0, Math.PI * 2);
@@ -81,8 +79,8 @@ export class Render {
 
   private calcInfluence(x: number, y: number) {
     const influence = this.balls.reduce((prev, curr) => {
-      const xx = (x + this.gridHalfStep - curr.x) ** 2;
-      const yy = (y + this.gridHalfStep - curr.y) ** 2;
+      const xx = (x - curr.x) ** 2;
+      const yy = (y - curr.y) ** 2;
       return curr.radius ** 2 / (xx + yy) + prev;
     }, 0);
     return influence >= 1;
