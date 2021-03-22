@@ -1,6 +1,12 @@
 import { Ball } from "./ball";
 import { rand, randRange } from "./utils";
 
+const colors = {
+  grid: "#263339",
+  ball: "salmon",
+  influence: "indianred",
+};
+
 export class Render {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -44,7 +50,7 @@ export class Render {
   }
 
   private drawInfluence() {
-    this.ctx.fillStyle = "indianred";
+    this.ctx.fillStyle = colors.influence;
     for (let x = 0; x < this.width; x += this.gridStep) {
       for (let y = 0; y < this.height; y += this.gridStep) {
         const inf = this.calcInfluence(x, y);
@@ -67,7 +73,7 @@ export class Render {
   }
 
   private drawGrid() {
-    this.ctx.fillStyle = "#263339";
+    this.ctx.fillStyle = colors.grid;
     for (let x = 0; x < this.width; x += this.gridStep) {
       this.ctx.fillRect(x, 0, 1, this.height);
     }
@@ -81,7 +87,7 @@ export class Render {
   }
 
   private drawBalls() {
-    this.ctx.strokeStyle = "salmon";
+    this.ctx.strokeStyle = colors.ball;
     this.balls.forEach((ball) => {
       this.ctx.beginPath();
       this.ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
