@@ -14,11 +14,11 @@ export class Render {
   private readonly width = 640;
   private readonly height = 480;
 
-  private readonly gridStep = 6;
+  private readonly gridStep = 8;
 
-  balls: Ball[] = [];
+  private balls: Ball[] = [];
 
-  configurations: number[][] = [];
+  private configurations: number[][] = [];
 
   constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     this.canvas = canvas;
@@ -27,11 +27,9 @@ export class Render {
     canvas.height = this.height;
 
     for (let x = 0; x < this.width; x += this.gridStep) {
-      const row: number[] = [];
-      for (let y = 0; y < this.height; y += this.gridStep) {
-        row.push(0b0000);
-      }
-      this.configurations.push(row);
+      const column: number[] = Array(Math.floor(this.height / this.gridStep));
+      column.fill(0b0000);
+      this.configurations.push(column);
     }
 
     for (let i = 0; i < 10; ++i) {
