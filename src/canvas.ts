@@ -28,16 +28,16 @@ export class Render {
     this.ctx = ctx;
     canvas.width = this.width;
     canvas.height = this.height;
-    this.widthCells = Math.floor(this.width / this.gridStep);
-    this.heightCells = Math.floor(this.height / this.gridStep);
+    this.widthCells = Math.ceil(this.width / this.gridStep);
+    this.heightCells = Math.ceil(this.height / this.gridStep);
 
-    for (let x = 0; x < this.widthCells + 1; x++) {
-      const column: boolean[] = Array(this.heightCells + 1);
+    for (let x = 0; x <= this.widthCells; x++) {
+      const column: boolean[] = Array(this.heightCells);
       column.fill(false);
       this.influences.push(column);
     }
 
-    for (let x = 0; x < this.widthCells; x++) {
+    for (let x = 0; x <= this.widthCells; x++) {
       const column: number[] = Array(this.heightCells);
       column.fill(0b0000);
       this.configurations.push(column);
@@ -137,7 +137,7 @@ export class Render {
       this.ctx.stroke();
     };
     for (let i = 0; i < this.configurations.length; i++) {
-      for (let j = 0; j < this.configurations.length; j++) {
+      for (let j = 0; j < this.configurations[i].length; j++) {
         const c = this.configurations[i][j];
         if (c === 0b0000) {
           // do nothing
