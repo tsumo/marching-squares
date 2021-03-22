@@ -8,8 +8,7 @@ export class Render {
   private readonly width = 640;
   private readonly height = 480;
 
-  private readonly gridStep = 14;
-  private readonly gridHalfStep = 7;
+  private readonly gridStep = 10;
 
   balls: Ball[] = [];
 
@@ -37,45 +36,21 @@ export class Render {
       this.clear();
       this.updateBalls();
       this.drawGrid();
+      this.drawInfluence();
       this.drawBalls();
       requestAnimationFrame(tick);
     };
     tick();
   }
 
-  private drawGrid() {
-    this.ctx.strokeStyle = "#263339";
+  private drawInfluence() {
     this.ctx.fillStyle = "indianred";
     for (let x = 0; x < this.width; x += this.gridStep) {
       for (let y = 0; y < this.height; y += this.gridStep) {
-        this.ctx.strokeRect(x, y, this.gridStep, this.gridStep);
-        const lb = this.calcInfluence(x, y + this.gridStep);
-        const rb = this.calcInfluence(x + this.gridStep, y + this.gridStep);
-        const rt = this.calcInfluence(x + this.gridStep, y);
-        const lt = this.calcInfluence(x, y);
-        let configuration = 0;
-        if (lb) {
-          configuration | 0b0001;
+        const inf = this.calcInfluence(x, y);
+        if (inf) {
           this.ctx.beginPath();
-          this.ctx.arc(x, y + this.gridStep, 2, 0, Math.PI * 2);
-          this.ctx.fill();
-        }
-        if (rb) {
-          configuration | 0b0010;
-          this.ctx.beginPath();
-          this.ctx.arc(x + this.gridStep, y + this.gridStep, 2, 0, Math.PI * 2);
-          this.ctx.fill();
-        }
-        if (rt) {
-          configuration | 0b0100;
-          this.ctx.beginPath();
-          this.ctx.arc(x + this.gridStep, y, 2, 0, Math.PI * 2);
-          this.ctx.fill();
-        }
-        if (lt) {
-          configuration | 0b1000;
-          this.ctx.beginPath();
-          this.ctx.arc(x, y, 2, 0, Math.PI * 2);
+          this.ctx.arc(x, y, 1.5, 0, Math.PI * 2);
           this.ctx.fill();
         }
       }
@@ -89,6 +64,16 @@ export class Render {
       return curr.radius ** 2 / (xx + yy) + prev;
     }, 0);
     return influence >= 1;
+  }
+
+  private drawGrid() {
+    this.ctx.fillStyle = "#263339";
+    for (let x = 0; x < this.width; x += this.gridStep) {
+      this.ctx.fillRect(x, 0, 1, this.height);
+    }
+    for (let y = 0; y < this.height; y += this.gridStep) {
+      this.ctx.fillRect(0, y, this.width, 1);
+    }
   }
 
   private updateBalls() {
