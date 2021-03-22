@@ -15,9 +15,12 @@ export class Render {
   private readonly height = 480;
 
   private readonly gridStep = 8;
+  private readonly widthCells: number;
+  private readonly heightCells: number;
 
-  private balls: Ball[] = [];
+  private readonly balls: Ball[] = [];
 
+  private influences: boolean[][] = [];
   private configurations: number[][] = [];
 
   constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
@@ -25,9 +28,17 @@ export class Render {
     this.ctx = ctx;
     canvas.width = this.width;
     canvas.height = this.height;
+    this.widthCells = Math.floor(this.width / this.gridStep);
+    this.heightCells = Math.floor(this.height / this.gridStep);
 
-    for (let x = 0; x < this.width; x += this.gridStep) {
-      const column: number[] = Array(Math.floor(this.height / this.gridStep));
+    for (let x = 0; x < this.widthCells + 1; x++) {
+      const column: boolean[] = Array(this.heightCells + 1);
+      column.fill(false);
+      this.influences.push(column);
+    }
+
+    for (let x = 0; x < this.widthCells; x++) {
+      const column: number[] = Array(this.heightCells);
       column.fill(0b0000);
       this.configurations.push(column);
     }
@@ -76,33 +87,29 @@ export class Render {
   }
 
   private calcConfigurations() {
-    const influences: boolean[][] = [];
-    for (let x = 0; x <= this.width; x += this.gridStep) {
-      const row: boolean[] = [];
-      for (let y = 0; y <= this.height; y += this.gridStep) {
+    for (let x = 0; x <= this.widthCells; x++) {
+      for (let y = 0; y <= this.heightCells; y++) {
         const influence = this.balls.reduce((prev, curr) => {
-          const xx = (x - curr.x) ** 2;
-          const yy = (y - curr.y) ** 2;
+          const xx = (x * this.gridStep - curr.x) ** 2;
+          const yy = (y * this.gridStep - curr.y) ** 2;
           return curr.radius ** 2 / (xx + yy) + prev;
         }, 0);
-        row.push(influence >= 1);
+        this.influences[x][y] = influence >= 1;
       }
-      influences.push(row);
     }
-    for (let i = 0; i < influences.length - 1; i++) {
-      const row = influences[i];
-      for (let j = 0; j < row.length - 1; j++) {
+    for (let i = 0; i < this.widthCells; i++) {
+      for (let j = 0; j < this.heightCells; j++) {
         let c = 0b0000;
-        if (influences[i][j]) {
+        if (this.influences[i][j]) {
           c = c | 0b1000;
         }
-        if (influences[i + 1][j]) {
+        if (this.influences[i + 1][j]) {
           c = c | 0b0100;
         }
-        if (influences[i][j + 1]) {
+        if (this.influences[i][j + 1]) {
           c = c | 0b0001;
         }
-        if (influences[i + 1][j + 1]) {
+        if (this.influences[i + 1][j + 1]) {
           c = c | 0b0010;
         }
         this.configurations[i][j] = c;
@@ -129,8 +136,8 @@ export class Render {
       this.ctx.lineTo(x2 + is, y2 + js);
       this.ctx.stroke();
     };
-    for (let i = 0; i < this.configurations.length - 1; i++) {
-      for (let j = 0; j < this.configurations.length - 1; j++) {
+    for (let i = 0; i < this.configurations.length; i++) {
+      for (let j = 0; j < this.configurations.length; j++) {
         const c = this.configurations[i][j];
         if (c === 0b0000) {
           // do nothing
