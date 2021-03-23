@@ -20,7 +20,7 @@ export class Render {
 
   private readonly balls: Ball[] = [];
 
-  private influences: boolean[][] = [];
+  private influences: number[][] = [];
   private configurations: number[][] = [];
 
   constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
@@ -32,8 +32,8 @@ export class Render {
     this.heightCells = Math.ceil(this.height / this.gridStep);
 
     for (let x = 0; x <= this.widthCells; x++) {
-      const column: boolean[] = Array(this.heightCells);
-      column.fill(false);
+      const column: number[] = Array(this.heightCells);
+      column.fill(0);
       this.influences.push(column);
     }
 
@@ -94,22 +94,22 @@ export class Render {
           const yy = (y * this.gridStep - curr.y) ** 2;
           return curr.radius ** 2 / (xx + yy) + prev;
         }, 0);
-        this.influences[x][y] = influence >= 1;
+        this.influences[x][y] = influence;
       }
     }
     for (let i = 0; i < this.widthCells; i++) {
       for (let j = 0; j < this.heightCells; j++) {
         let c = 0b0000;
-        if (this.influences[i][j]) {
+        if (this.influences[i][j] >= 1) {
           c = c | 0b1000;
         }
-        if (this.influences[i + 1][j]) {
+        if (this.influences[i + 1][j] >= 1) {
           c = c | 0b0100;
         }
-        if (this.influences[i][j + 1]) {
+        if (this.influences[i][j + 1] >= 1) {
           c = c | 0b0001;
         }
-        if (this.influences[i + 1][j + 1]) {
+        if (this.influences[i + 1][j + 1] >= 1) {
           c = c | 0b0010;
         }
         this.configurations[i][j] = c;
