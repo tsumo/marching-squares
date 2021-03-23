@@ -7,6 +7,36 @@ const colors = {
   influence: "indianred",
 };
 
+type LineCoefs = [number, number, number, number];
+
+const lines: Record<string, LineCoefs> = {
+  leftBottom: [0, 0.5, 0.5, 1],
+  rightBottom: [1, 0.5, 0.5, 1],
+  rightTop: [0.5, 0, 1, 0.5],
+  leftTop: [0.5, 0, 0, 0.5],
+  horizontal: [0, 0.5, 1, 0.5],
+  vertical: [0.5, 0, 0.5, 1],
+};
+
+const configurationsLUT: Record<number, LineCoefs[]> = {
+  0b0000: [],
+  0b0001: [lines.leftBottom],
+  0b0010: [lines.rightBottom],
+  0b0011: [lines.horizontal],
+  0b0100: [lines.rightTop],
+  0b0101: [lines.leftTop, lines.rightBottom],
+  0b0110: [lines.vertical],
+  0b0111: [lines.leftTop],
+  0b1000: [lines.leftTop],
+  0b1001: [lines.vertical],
+  0b1010: [lines.rightTop, lines.leftBottom],
+  0b1011: [lines.rightTop],
+  0b1100: [lines.horizontal],
+  0b1101: [lines.rightBottom],
+  0b1110: [lines.leftBottom],
+  0b1111: [],
+};
+
 export class Render {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
@@ -120,7 +150,6 @@ export class Render {
 
   private drawConfigurations() {
     const s = this.gridStep;
-    const hs = this.gridStep / 2;
     this.ctx.strokeStyle = colors.influence;
     const draw = (
       i: number,
@@ -139,42 +168,10 @@ export class Render {
     };
     for (let i = 0; i < this.configurations.length; i++) {
       for (let j = 0; j < this.configurations[i].length; j++) {
-        const c = this.configurations[i][j];
-        if (c === 0b0000) {
-          // do nothing
-        } else if (c === 0b0001) {
-          draw(i, j, 0, hs, hs, s);
-        } else if (c === 0b0010) {
-          draw(i, j, s, hs, hs, s);
-        } else if (c === 0b0011) {
-          draw(i, j, 0, hs, s, hs);
-        } else if (c === 0b0100) {
-          draw(i, j, hs, 0, s, hs);
-        } else if (c === 0b0101) {
-          draw(i, j, hs, 0, 0, hs);
-          draw(i, j, s, hs, hs, s);
-        } else if (c === 0b0110) {
-          draw(i, j, hs, 0, hs, s);
-        } else if (c === 0b0111) {
-          draw(i, j, hs, 0, 0, hs);
-        } else if (c === 0b1000) {
-          draw(i, j, hs, 0, 0, hs);
-        } else if (c === 0b1001) {
-          draw(i, j, hs, 0, hs, s);
-        } else if (c === 0b1010) {
-          draw(i, j, hs, 0, s, hs);
-          draw(i, j, 0, hs, hs, s);
-        } else if (c === 0b1011) {
-          draw(i, j, hs, 0, s, hs);
-        } else if (c === 0b1100) {
-          draw(i, j, 0, hs, s, hs);
-        } else if (c === 0b1101) {
-          draw(i, j, s, hs, hs, s);
-        } else if (c === 0b1110) {
-          draw(i, j, 0, hs, hs, s);
-        } else if (c === 0b1111) {
-          // do nothing
-        }
+        const configuration = this.configurations[i][j];
+        configurationsLUT[configuration].forEach((coefs) =>
+          draw(i, j, coefs[0] * s, coefs[1] * s, coefs[2] * s, coefs[3] * s)
+        );
       }
     }
   }
