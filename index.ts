@@ -1,4 +1,4 @@
-import { Render } from "./src/canvas";
+import { Render } from "./src/render";
 
 const init = () => {
   const canvas = document.getElementById("c");

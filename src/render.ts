@@ -72,6 +72,7 @@ export class Render {
   private clear() {
     this.ctx.clearRect(0, 0, this.width, this.height);
   }
+
   private updateBalls() {
     this.balls.forEach((ball) => ball.update());
   }
