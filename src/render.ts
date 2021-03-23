@@ -148,29 +148,23 @@ export class Render {
     }
   }
 
-  private drawConfigurations() {
+  private drawLine(i: number, j: number, coefs: LineCoefs) {
     const s = this.gridStep;
+    const is = i * s;
+    const js = j * s;
+    this.ctx.beginPath();
+    this.ctx.moveTo(coefs[0] * s + is, coefs[1] * s + js);
+    this.ctx.lineTo(coefs[2] * s + is, coefs[3] * s + js);
+    this.ctx.stroke();
+  }
+
+  private drawConfigurations() {
     this.ctx.strokeStyle = colors.influence;
-    const draw = (
-      i: number,
-      j: number,
-      x1: number,
-      y1: number,
-      x2: number,
-      y2: number
-    ) => {
-      const is = i * s;
-      const js = j * s;
-      this.ctx.beginPath();
-      this.ctx.moveTo(x1 + is, y1 + js);
-      this.ctx.lineTo(x2 + is, y2 + js);
-      this.ctx.stroke();
-    };
     for (let i = 0; i < this.configurations.length; i++) {
       for (let j = 0; j < this.configurations[i].length; j++) {
         const configuration = this.configurations[i][j];
         configurationsLUT[configuration].forEach((coefs) =>
-          draw(i, j, coefs[0] * s, coefs[1] * s, coefs[2] * s, coefs[3] * s)
+          this.drawLine(i, j, coefs)
         );
       }
     }
