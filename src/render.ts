@@ -53,6 +53,13 @@ export class Render {
   private influences: number[][] = [];
   private configurations: number[][] = [];
 
+  config = {
+    grid: true,
+    balls: true,
+    metaballs: true,
+    smoothing: true,
+  };
+
   constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
     this.canvas = canvas;
     this.ctx = ctx;
@@ -91,9 +98,9 @@ export class Render {
       this.clear();
       this.updateBalls();
       this.calcConfigurations();
-      this.drawGrid();
-      this.drawConfigurations();
-      this.drawBalls();
+      this.config.grid && this.drawGrid();
+      this.config.balls && this.drawBalls();
+      this.config.metaballs && this.drawConfigurations();
       requestAnimationFrame(tick);
     };
     tick();

@@ -2,13 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Marching squares</title>
     <link type="text/css" rel="stylesheet" href="style.css" />
   </head>
   <body>
     <canvas id="c"></canvas>
+    <div class="controls">
+      <label>grid<input type="checkbox" checked name="grid" /></label>
+      <label>balls<input type="checkbox" checked name="balls" /></label>
+      <label>metaballs<input type="checkbox" checked name="metaballs" /></label>
+      <label>smoothing<input type="checkbox" checked name="smoothing" /></label>
+    </div>
     <script src="./index.ts"></script>
   </body>
 </html>
